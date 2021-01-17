@@ -27,9 +27,7 @@ For each position of the generated password candidates we need to configure a pl
 - A variable is indicated by the ? letter followed by one of the built-in charset (l, u, d, s, a) or one of the custom charset variable names (1, 2, 3, 4).
 - A static letter is not indicated by a letter. An exception is if we want the static letter ? itself, which must be written as ??.
 
-Built-in charsets
---------------
-
+## Built-in charsets
 - ?l = abcdefghijklmnopqrstuvwxyz
 - ?u = ABCDEFGHIJKLMNOPQRSTUVWXYZ
 - ?d = 0123456789
@@ -37,9 +35,7 @@ Built-in charsets
 - ?a = ?l?u?d?s
 - ?b = 0x00 - 0xff
 
-Custom charsets
---------------
-
+## Custom charsets
 There are four commandline-parameters to configure four custom charsets.
 
 - --custom-charset1=CS
@@ -80,4 +76,13 @@ The following commands create the following password candidates:
 
 - command: -1 efghijklmnop ?1?1?1
 - keyspace: eee - ppp
+
+## Compilation
+Execute the following commands:
+```shell
+git clone git@github.com:Vagelis-Prokopiou/maskprocessor-rs.git;
+cd maskprocessor-rs;
+cargo build --release;
+./target/release/mp -h;
+```
 
