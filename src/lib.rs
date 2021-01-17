@@ -1,3 +1,5 @@
+use std::io::Write;
+
 pub const PW_MAX: u8 = 255;
 pub const CHARSET_LOWER: [char; 26] = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
 pub const CHARSET_UPPER: [char; 26] = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
@@ -5,9 +7,9 @@ pub const CHARSET_DIGITS: [char; 10] = ['0', '1', '2', '3', '4', '5', '6', '7', 
 pub const CHARSET_SPECIAL: [char; 33] = [' ', '!', '\"', '#', '$', '%', '&', '\'', '(', ')', '*', '+', ',', '-', '.', '/', ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '_', '`', '{', '|', '}', '~'];
 pub const CHARSET_ALL: [char; 95] = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ' ', '!', '\"', '#', '$', '%', '&', '\'', '(', ')', '*', '+', ',', '-', '.', '/', ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '_', '`', '{', '|', '}', '~'];
 
-pub fn recurse(v: &Vec<Vec<char>>, list_to_twiddle: usize, current_permutation: &mut Vec<char>) {
+pub fn recurse_print(data: &Vec<Vec<char>>, list_to_twiddle: usize, current_permutation: &mut Vec<char>) {
     // See: https://stackoverflow.com/questions/3536833/arbitrary-number-of-nested-loops
-    if list_to_twiddle == v.len() {
+    if list_to_twiddle == data.len() {
         for i in current_permutation {
             print!("{}", i);
         }
@@ -15,9 +17,28 @@ pub fn recurse(v: &Vec<Vec<char>>, list_to_twiddle: usize, current_permutation: 
         return;
     }
 
-    for i in 0..v[list_to_twiddle].len() {
-        current_permutation.push(v[list_to_twiddle][i]);
-        recurse(v, list_to_twiddle + 1, current_permutation);
+    for i in 0..data[list_to_twiddle].len() {
+        current_permutation.push(data[list_to_twiddle][i]);
+        recurse_print(data, list_to_twiddle + 1, current_permutation);
+        current_permutation.pop();
+    }
+}
+
+pub fn recurse_write(data: &Vec<Vec<char>>
+                     , list_to_twiddle: usize
+                     , current_permutation: &mut Vec<char>
+                     , buffer_to_write: &mut Vec<u8>) {
+    if list_to_twiddle == data.len() {
+        for i in current_permutation {
+            write!(buffer_to_write, "{}", i).expect("recurse_write: Failed to write");
+        }
+        writeln!(buffer_to_write).expect("recurse_write: Failed to write");
+        return;
+    }
+
+    for i in 0..data[list_to_twiddle].len() {
+        current_permutation.push(data[list_to_twiddle][i]);
+        recurse_write(data, list_to_twiddle + 1, current_permutation, buffer_to_write);
         current_permutation.pop();
     }
 }

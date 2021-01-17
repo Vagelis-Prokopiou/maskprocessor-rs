@@ -2,11 +2,14 @@
 use maskprocessor_rs::*;
 use clap::{Arg, App};
 use std::process::exit;
+use std::fs::File;
+use std::io::Write;
 
 fn main() {
     let mask = "mask";
     let combinations = "combinations";
     let custom_charset_value_name = "charset";
+    let file = "file";
 
     /*
     let increment = "increment";
@@ -15,7 +18,6 @@ fn main() {
     let start_at = "start-at";
     let stop_at = "stop-at";
     let occurrence_max = "occurrence-max";
-    let file = "file";
 
     let arg_increment = Arg::with_name(increment)
         .conflicts_with(start_at)
@@ -67,12 +69,6 @@ fn main() {
         .takes_value(true)
         .value_name("word")
         .help("Stop at specific position");
-    let arg_file = Arg::with_name(file)
-        .short("o")
-        .long("output-file")
-        .takes_value(true)
-        .value_name(file)
-        .help("Output file");
     */
 
     // Arguments help
@@ -95,6 +91,12 @@ fn main() {
         .short("c")
         .long(combinations)
         .help("Calculate the number of combinations and exit");
+    let arg_file = Arg::with_name(file)
+        .short("o")
+        .long("output-file")
+        .takes_value(true)
+        .value_name(file)
+        .help("Save the output to the provided file");
 
     let matches = App::new("\nmaskprocessor-rs (mp)")
         .version("0.1")
@@ -107,7 +109,7 @@ fn main() {
         // .arg(arg_occurrence_max) // Todo: Implement this
         // .arg(arg_start_at)       // Todo: Implement this
         // .arg(arg_stop_at)        // Todo: Implement this
-        // .arg(arg_file)           // Todo: Implement this
+        .arg(arg_file)
         .arg(arg_compinations)
         .arg(Arg::with_name("custom-charset1")
             .short("1")
@@ -208,9 +210,22 @@ fn main() {
         exit(0);
     }
 
+    // Write to file.
+    if matches.is_present(file) {
+        let file_value = matches.value_of(file).unwrap();
+        let mut file = File::create(file_value)
+            .expect(&*format!("Failed to create the {} file", file_value));
+        let mut buffer_to_write: Vec<u8> = Vec::with_capacity(get_number_of_combinations(&output_charsets_array) as usize);
+        let mut permutations: Vec<char> = vec![];
+        recurse_write(&output_charsets_array, 0, &mut permutations, &mut buffer_to_write);
+        file.write_all(&*buffer_to_write).expect(&*format!("Failed to write to {}", file_value));
+        assert!(buffer_to_write.capacity() >= buffer_to_write.len());
+        exit(0);
+    }
+
     // Start execution.
     let mut permutations: Vec<char> = vec![];
-    recurse(&output_charsets_array, 0, &mut permutations);
+    recurse_print(&output_charsets_array, 0, &mut permutations);
 }
 
 
