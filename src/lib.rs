@@ -51,9 +51,6 @@ pub fn get_charset_ascii_all() -> Vec<char> {
     return characters;
 }
 
-pub fn mp_get_compinations() {
-    todo!();
-}
 
 /*
 fn validate_increment(increment: &str) {
@@ -72,7 +69,33 @@ fn validate_increment(increment: &str) {
 }
 */
 
+pub fn get_number_of_combinations<T>(input: &Vec<Vec<T>>) -> u64 {
+    return input
+        .iter()
+        .map(|charset| charset.len())
+        .fold(1, |acc, x| acc * x as u64);
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn compinations_test() {
+        let input = vec![vec!['a']];
+        assert_eq!(get_number_of_combinations(&input), 1);
+
+        let input = vec![vec!['a', 'b'], vec!['a', 'b', 'c']];
+        assert_eq!(get_number_of_combinations(&input), 6);
+
+        // ?a?a?a?a?a == 7737809375
+        let input = vec![
+            vec![0; 95]
+            , vec![0; 95]
+            , vec![0; 95]
+            , vec![0; 95]
+            , vec![0; 95]
+        ];
+        assert_eq!(get_number_of_combinations(&input), 7737809375);
+    }
 }

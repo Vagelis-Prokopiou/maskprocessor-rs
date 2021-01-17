@@ -94,7 +94,7 @@ fn main() {
     let arg_compinations = Arg::with_name(combinations)
         .short("c")
         .long(combinations)
-        .help("Calculate number of combinations");
+        .help("Calculate the number of combinations and exit");
 
     let matches = App::new("\nmaskprocessor-rs (mp)")
         .version("0.1")
@@ -202,8 +202,13 @@ fn main() {
         }
     }
 
+    // Combinations
+    if matches.is_present(combinations) {
+        println!("{}", get_number_of_combinations(&output_charsets_array));
+        exit(0);
+    }
 
-    // Start printing.
+    // Start execution.
     let mut permutations: Vec<char> = vec![];
     recurse(&output_charsets_array, 0, &mut permutations);
 }
