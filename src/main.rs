@@ -6,6 +6,10 @@ use std::fs::File;
 use std::io::Write;
 
 fn main() {
+    // Error messages
+    let message_mask_error = "Error: Incorrect mask format";
+
+    // Argument names
     let mask = "mask";
     let combinations = "combinations";
     let custom_charset_value_name = "charset";
@@ -157,6 +161,11 @@ fn main() {
 
         if p0 == '?' {
             line_pos += 1;
+            if line_pos == mask_array.len() {
+                // Todo: Check this mask ???. Prints src.
+                eprintln!("{}", message_mask_error);
+               exit(1);
+            }
             let p1 = mask_array[line_pos];
 
             if p1 == '?' {
@@ -195,7 +204,7 @@ fn main() {
                 continue;
             }
             // If we reached this point, the mask is wrong.
-            eprintln!("Incorrect mask format: ?{}", mask_array[line_pos]);
+            eprintln!("{}", message_mask_error);
             exit(1);
         } else {
             let character = mask_array[line_pos as usize];
