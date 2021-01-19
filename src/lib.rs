@@ -90,7 +90,7 @@ fn validate_increment(increment: &str) {
 }
 */
 
-pub fn get_number_of_combinations<T>(input: &Vec<Vec<T>>) -> u64 {
+pub fn get_number_of_combinations(input: &Vec<Vec<char>>) -> u64 {
     return input
         .iter()
         .map(|charset| charset.len())
@@ -111,11 +111,11 @@ mod tests {
 
         // ?a?a?a?a?a == 7737809375
         let input = vec![
-            vec![0; 95]
-            , vec![0; 95]
-            , vec![0; 95]
-            , vec![0; 95]
-            , vec![0; 95]
+            vec!['a'; 95]
+            , vec!['a'; 95]
+            , vec!['a'; 95]
+            , vec!['a'; 95]
+            , vec!['a'; 95]
         ];
         assert_eq!(get_number_of_combinations(&input), 7737809375);
     }
