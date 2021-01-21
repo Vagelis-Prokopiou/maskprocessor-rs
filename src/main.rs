@@ -14,24 +14,15 @@ fn main() {
     let combinations = "combinations";
     let custom_charset_value_name = "charset";
     let file = "file";
+    let increment = "increment";
 
     /*
-    let increment = "increment";
     let hex_charset = "hex-charset";
     let seq_max = "seq-max";
     let start_at = "start-at";
     let stop_at = "stop-at";
     let occurrence_max = "occurrence-max";
 
-    let arg_increment = Arg::with_name(increment)
-        .conflicts_with(start_at)
-        .conflicts_with(stop_at)
-        .short("i")
-        .long(increment)
-        .takes_value(true)
-        .number_of_values(2)
-        .value_names(&["num", "num"])
-        .help("Enable increment mode");
     let arg_hex_charset = Arg::with_name(hex_charset)
         .long(hex_charset)
         .help("Assume charset is given in hex");
@@ -101,13 +92,21 @@ fn main() {
         .takes_value(true)
         .value_name(file)
         .help("Save the output to the provided file");
+    let arg_increment = Arg::with_name(increment)
+        //.conflicts_with(start_at)
+        //.conflicts_with(stop_at)
+        .short("i")
+        .long(increment)
+        .takes_value(true)
+        .value_name("NUM:NUM")
+        .help("Enable increment mode. 1st NUM=start, 2nd NUM=stop.\nExample: -i 4:8 searches lengths 4-8 (inclusive)");
 
     let matches = App::new("\nmaskprocessor-rs (mp)")
         .version("0.1")
         .author("Vagelis Prokopiou <vagelis.prokopiou@gmail.com>")
         .about("High performance word generator with a per-position configurable charset.")
         .after_help(after_help)
-        // .arg(arg_increment)      // Todo: Implement this
+
         // .arg(arg_hex_charset)    // Todo: Implement this
         // .arg(arg_seq_max)        // Todo: Implement this
         // .arg(arg_occurrence_max) // Todo: Implement this
@@ -115,6 +114,7 @@ fn main() {
         // .arg(arg_stop_at)        // Todo: Implement this
         .arg(arg_file)
         .arg(arg_compinations)
+        .arg(arg_increment)
         .arg(Arg::with_name("custom-charset1")
             .short("1")
             .long("custom-charset1")
@@ -140,13 +140,6 @@ fn main() {
             .help("The mask (e.g.: ?a?l?u)"))
         .get_matches();
 
-    // Custom validation.
-    /*
-    if matches.is_present(increment) {
-        validate_increment(&increment);
-    }
-    */
-
     /* buffers */
     let mut output_charsets_array: Vec<Vec<char>> = vec![];
 
@@ -164,7 +157,7 @@ fn main() {
             if line_pos == mask_array.len() {
                 // Todo: Check this mask ???. Prints src.
                 eprintln!("{}", message_mask_error);
-               exit(1);
+                exit(1);
             }
             let p1 = mask_array[line_pos];
 
@@ -232,9 +225,24 @@ fn main() {
         exit(0);
     }
 
+    if matches.is_present(increment) {
+        // Todo: Add it to the file output too.
+        let increment_values: Vec<u8> = increment_values_get(matches.value_of(increment).unwrap());
+        assert!(increment_values[1] <= output_charsets_array.len() as u8);
+        let mut data: Vec<Vec<char>> = vec![];
+        for i in (increment_values[0] - 1)..=(increment_values[1] - 1) {
+            data.push(output_charsets_array[i as usize].clone());
+            let mut permutations: Vec<char> = vec![];
+            recurse_print(&data, 0, &mut permutations);
+        }
+        exit(0);
+    }
+
     // Start execution.
     let mut permutations: Vec<char> = vec![];
     recurse_print(&output_charsets_array, 0, &mut permutations);
 }
+
+
 
 

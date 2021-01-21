@@ -97,12 +97,34 @@ pub fn get_number_of_combinations(input: &Vec<Vec<char>>) -> u64 {
         .fold(1, |acc, x| acc * x as u64);
 }
 
+pub fn increment_values_get(input: &str) -> Vec<u8> {
+    let result: Vec<&str> = input.split(':')
+        .into_iter()
+        .filter(|value| *value != "")
+        .collect();
+    assert_eq!(result.len(), 2);
+
+    let result: Vec<u8> = result
+        .into_iter()
+        .map(|i| i.parse::<u8>().unwrap())
+        .collect();
+    assert!(result[0] > 0);
+    assert!(result[1] >= result[0]);
+
+    return result;
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
-    fn compinations_test() {
+    fn test_increment_values_get() {
+        assert_eq!(increment_values_get("1:2"), vec![1, 2]);
+    }
+
+    #[test]
+    fn test_get_number_of_combinations() {
         let input = vec![vec!['a']];
         assert_eq!(get_number_of_combinations(&input), 1);
 
